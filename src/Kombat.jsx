@@ -69,6 +69,12 @@ export default function Kombat() {
     return () => window.clearInterval(interval);
   }, [running]);
 
+  // Starting or advancing enables the input only after React commits the next render.
+  // Focusing it inside the button handler happens too early while it is still disabled.
+  useEffect(() => {
+    if (running) inputRef.current?.focus();
+  }, [running, battle.round]);
+
   useEffect(() => {
     if (!finished || savedRef.current) return;
     savedRef.current = true;
