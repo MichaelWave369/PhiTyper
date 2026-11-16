@@ -29,6 +29,15 @@ try {
     onNewDrill: () => {}
   }));
   assert.match(insights, /ACCURACY HEATMAP/);
+  const { default: DailyBoard } = await server.ssrLoadModule('/src/DailyBoard.jsx');
+  const { emptyDaily } = await server.ssrLoadModule('/src/daily.js');
+  const board = renderToString(React.createElement(DailyBoard, {
+    dayKey: '2026-11-16', daily: emptyDaily(), precision: emptyPrecision(),
+    profile: { sessions: 16, cleared: [0,1,2,3,4,5,6,7,8], best: { sprint: { wpm: 61, accuracy: 94 } } }
+  }));
+  assert.match(board, /Daily Dojo/);
+  assert.match(board, /Black Belt/);
+  assert.match(board, /Lightning Fingers/);
   console.log('React app render smoke test passed.');
 } finally {
   await server.close();

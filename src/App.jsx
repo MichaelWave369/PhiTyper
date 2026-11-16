@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Kombat from './Kombat.jsx';
 import PrecisionInsights from './PrecisionInsights.jsx';
+import DailyBoard from './DailyBoard.jsx';
+import {
+  DAILY_STORAGE_KEY, emptyDaily, readDaily, saveDaily,
+  localDayKey, dailyStars, completeDaily
+} from './daily.js';
 import {
   ACCURACY_GOAL, PRECISION_KEY, emptyPrecision, readPrecision,
   recordKeypresses, completePrecisionSession, focusKeys,
@@ -59,6 +64,8 @@ function TypingText({ target, typed }) {
 
 export default function App() {
   const [mode, setMode] = useState('dojo');
+  const [dailyDay, setDailyDay] = useState(() => localDayKey(new Date()));
+  const [daily, setDaily] = useState(() => typeof window === 'undefined' ? emptyDaily() : readDaily(window.localStorage));
   const [lessonIndex, setLessonIndex] = useState(0);
   const [periodSpaces, setPeriodSpaces] = useState(() => typeof window === 'undefined' ? 1 : readPeriodSpacing(window.localStorage));
   const [run, setRun] = useState(emptyRun);
@@ -79,7 +86,7 @@ export default function App() {
   const target = applyPeriodSpacing(
     mode === 'precision'
       ? makePrecisionDrill(drill.focus, drill.variation)
-      : makeTarget(mode, lessonIndex),
+      : makeTarget(mode, lessonIndex, dailyDay),
     periodSpaces
   );
   const limit = selectedMode.duration ? selectedMode.duration * 1000 : null;
@@ -93,6 +100,7 @@ export default function App() {
   const remaining = limit === null ? null : Math.max(0, Math.ceil((limit - elapsed) / 1000));
   const current = target[run.typed.length] || '';
   const isFinished = run.finishedAt !== null;
+  const starsToday = mode === 'daily' ? dailyStars(score) : 0;
   const isTimed = limit !== null;
   const progressValue = isTimed ? Math.min(100, Math.round(elapsed / limit * 100)) : score.progress;
   const weakNow = rankWeakKeys(precision, 3);
@@ -104,6 +112,8 @@ export default function App() {
     }, 300);
     return () => window.clearTimeout(id);
   }, [precision]);
+
+  useEffect(() => { saveDaily(window.localStorage, daily); }, [daily]);
 
   useEffect(() => {
     if (!run.startedAt || isFinished) return;
@@ -120,12 +130,13 @@ export default function App() {
     if (!run.finishedAt || savedFinish.current === run.finishedAt) return;
     savedFinish.current = run.finishedAt;
     setPrecision((prior) => completePrecisionSession(prior, mode, score));
+    if (mode === 'daily') setDaily((prior) => completeDaily(prior, dailyDay, score));
     setProfile((prior) => {
       const updated = finishProfile(prior, mode, lessonIndex, score, passed);
       try { window.localStorage.setItem('phityper-progress-v1', JSON.stringify(updated)); } catch { /* privacy settings */ }
       return updated;
     });
-  }, [run.finishedAt, mode, lessonIndex, score.wpm, score.accuracy, passed]);
+  }, [run.finishedAt, mode, lessonIndex, score.wpm, score.accuracy, score.correct, dailyDay, passed]);
 
   function playNote(isCorrect) {
     if (!soundEnabled) return;
@@ -146,6 +157,7 @@ export default function App() {
     } catch { /* unsupported audio device */ }
   }
   function restart(nextMode = mode, nextLesson = lessonIndex) {
+    if (nextMode === 'daily') setDailyDay(localDayKey(new Date()));
     if (nextMode === 'precision') {
       setDrill((previous) => ({
         focus: focusKeys(precision),
@@ -206,7 +218,7 @@ export default function App() {
           <div className="eyebrow"><span className="eyebrow-line"/> TRAIN YOUR HANDS. FREE YOUR MIND.</div>
           <h1>FIND YOUR <em>FLOW.</em><br/>MASTER THE KEYS<span className="title-dot">.</span></h1>
           <p>From your very first keystroke to lightning-fast reflexes. Build speed, sharpen accuracy, and earn your black belt. One joyful session at a time.</p>
-          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 6 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
+          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 7 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
         </div>
         <div className="hero-emblem" aria-hidden="true"><div className="emblem-outer"><div className="emblem-middle"><div className="emblem-inner"><span>Φ</span><small>DOJO</small></div></div></div><span className="emblem-spark spark-a">✦</span><span className="emblem-spark spark-b">✧</span></div>
       </section>
@@ -236,13 +248,14 @@ export default function App() {
           })}
         </div>
       </section>}
+      {mode === 'daily' && <DailyBoard dayKey={dailyDay} daily={daily} profile={profile} precision={precision}/>}
       {mode === 'precision' && <PrecisionInsights
         profile={precision}
         drill={drill}
         onNewDrill={() => restart('precision')}
       />}
       {mode === 'kombat' ? <Kombat /> : <section className="arena-section">
-        <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' ? '03' : '02'} / TRAINING ARENA</span><h2>{mode === 'precision' ? 'Sharpen your accuracy' : 'Enter the dojo'}<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
+        <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' || mode === 'daily' ? '03' : '02'} / TRAINING ARENA</span><h2>{mode === 'precision' ? 'Sharpen your accuracy' : mode === 'daily' ? 'Take today’s quest' : 'Enter the dojo'}<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
         <div className="arena">
           <div className="arena-top">
             <div className="arena-level"><span className="arena-label">{mode === 'dojo' ? 'CURRENT LESSON' : 'CURRENT CHALLENGE'}</span><h3>{mode === 'dojo' ? lesson.title : selectedMode.title}</h3><p>{mode === 'dojo' ? lesson.focus : mode === 'precision' ? 'Target keys: ' + drill.focus.join(', ').toUpperCase() : selectedMode.subtitle}</p></div>
@@ -254,6 +267,7 @@ export default function App() {
             <div className="metric"><span>{remaining !== null ? 'TIME LEFT' : 'TIME'}</span><strong>{remaining !== null ? remaining : Math.floor(elapsed / 1000)}<small> SEC</small></strong></div>
             <div className="metric"><span>COMBO</span><strong>{combo}<small> HITS</small></strong></div>
           </div>
+          {mode === 'daily' && <div className="daily-arena-hint">Your challenge is 60 seconds. Aim for at least 30 correct characters and 80% accuracy to earn your first star. Reach 50 WPM at 98% accuracy for all three!</div>}
           <div className="spacing-preference">
             <div className="spacing-explainer">
               <strong>AFTER A PERIOD</strong>
@@ -283,14 +297,23 @@ export default function App() {
           <div className="keyboard-heading"><Icon name="keyboard" size={16}/><span>KEYBOARD GUIDE</span><span className="keyboard-caption">GLOW = NEXT KEY</span></div>
           <Keyboard nextChar={current} lastKey={lastKey}/>
           {mode === 'dojo' && <div className="lesson-goal"><Icon name="target" size={17}/><span>TO EARN THIS BELT</span><strong>{lesson.targetWpm}+ WPM</strong><b>·</b><strong>{lesson.targetAccuracy}%+ ACCURACY</strong>{best && <span className="best-record">BEST {best.wpm} WPM / {best.accuracy}%</span>}</div>}
+          {mode === 'daily' && <div className="lesson-goal">
+            <Icon name="target" size={17}/><span>TODAY'S STAR RATING</span>
+            <strong>{starsToday} / 3 STARS</strong>
+            <span>Replay to improve today's best.</span>
+          </div>}
           {mode === 'precision' && <div className="lesson-goal">
             <Icon name="target" size={17}/><span>YOUR PRECISION GOAL</span><strong>{ACCURACY_GOAL}%+ ACCURACY</strong>
             <span>Take your time. There is no speed requirement.</span>
           </div>}
           {isFinished && <div className={'result-panel' + (passed ? ' victory' : '')} role="status" aria-live="polite">
             <div className="result-medallion">{passed ? '★' : mode === 'dojo' ? '↻' : '✦'}</div>
-            <div className="result-copy"><span>{passed ? 'BELT EARNED!' : mode === 'dojo' ? 'TRAINING COMPLETE' : mode === 'precision' && score.accuracy >= ACCURACY_GOAL ? 'PRECISION GOAL MET' : 'ROUND COMPLETE'}</span><h3>{passed ? 'Beautiful work, keyboard warrior.' : mode === 'dojo' ? 'Every attempt makes you stronger.' : mode === 'precision' ? practiceFeedback(score.accuracy) : 'Your fingers found their rhythm.'}</h3><p>{score.wpm} WPM · {score.accuracy}% accuracy · {run.mistakes} missed keystrokes{mode === 'dojo' && !passed ? '. Reach both belt targets to advance.' : '.'}</p></div>
-            <div className="result-buttons">{canAdvance && <button className="next-btn" onClick={() => restart('dojo', nextUnlocked)}>NEXT BELT <Icon name="arrow" size={15}/></button>}<button className="again-btn" onClick={() => restart()}>{mode === 'precision' ? 'NEW ADAPTIVE DRILL' : 'TRY AGAIN'}</button></div>
+            <div className="result-copy"><span>{passed ? 'BELT EARNED!' : mode === 'dojo' ? 'TRAINING COMPLETE' : mode === 'daily' ? 'TODAY’S QUEST COMPLETE' : mode === 'precision' && score.accuracy >= ACCURACY_GOAL ? 'PRECISION GOAL MET' : 'ROUND COMPLETE'}</span>
+              {mode === 'daily' && <div className="daily-session-stars" aria-label={starsToday + ' of 3 stars earned'}>
+                {[0,1,2].map(index => <span key={index} aria-hidden="true" className={index < starsToday ? '' : 'unearned'}>★</span>)}
+              </div>}
+              <h3>{passed ? 'Beautiful work, keyboard warrior.' : mode === 'dojo' ? 'Every attempt makes you stronger.' : mode === 'daily' ? starsToday === 3 ? 'A perfect three-star quest!' : 'Come back stronger tomorrow, or replay today.' : mode === 'precision' ? practiceFeedback(score.accuracy) : 'Your fingers found their rhythm.'}</h3><p>{score.wpm} WPM · {score.accuracy}% accuracy · {run.mistakes} missed keystrokes{mode === 'dojo' && !passed ? '. Reach both belt targets to advance.' : '.'}</p></div>
+            <div className="result-buttons">{canAdvance && <button className="next-btn" onClick={() => restart('dojo', nextUnlocked)}>NEXT BELT <Icon name="arrow" size={15}/></button>}<button className="again-btn" onClick={() => restart()}>{mode === 'precision' ? 'NEW ADAPTIVE DRILL' : mode === 'daily' ? 'REPLAY QUEST' : 'TRY AGAIN'}</button></div>
           </div>}
         </div>
       </section>}

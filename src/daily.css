@@ -1,0 +1,80 @@
+/* Daily Dojo · responsive 60-second quest, achievements and streaks */
+.daily-section{margin-top:62px}
+.daily-shell{border:1px solid #39425f;border-radius:17px;background:linear-gradient(130deg,#191d36,#111d2f 75%);overflow:hidden;box-shadow:0 20px 65px #0003}
+.daily-hero{display:grid;grid-template-columns:1.45fr .55fr;gap:30px;align-items:center;padding:34px 36px 31px;border-bottom:1px solid #333e58}
+.daily-overline{color:#b5fa77;font-size:10px;font-weight:900;letter-spacing:1.5px}
+.daily-hero h3{font:700 clamp(27px,3.6vw,43px)/1.15 'Space Grotesk',sans-serif;letter-spacing:-1.7px;margin:16px 0 12px}
+.daily-hero h3 em{color:#b9fa7f;font-style:normal}
+.daily-hero p{font-size:13px;line-height:1.75;color:#acb9d0;max-width:570px;margin:0}
+.daily-mission-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.daily-mission-pills span{border:1px solid #52624f;border-radius:20px;background:#1c2d2c;color:#c4ed9d;padding:7px 11px;font-size:9px;font-weight:900;letter-spacing:1px}
+.daily-cta{display:inline-flex;align-items:center;gap:20px;margin-top:23px;padding:13px 19px;background:#b5fa6f;color:#17252a;border-radius:8px;font-size:11px;font-weight:900;letter-spacing:.8px}
+.daily-cta:hover{background:#d1ff9b}.daily-cta span{font-size:19px}
+.daily-hero-right{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:214px;padding:20px;border:1px solid #4a526e;border-radius:14px;background:radial-gradient(circle at 50% 38%,#6b573f55,#24263f 70%);text-align:center}
+.daily-star-halo{position:absolute;top:-85px;font-size:250px;line-height:1;color:#dbc07b13;pointer-events:none}
+.daily-hero-right>span:not(.daily-star-halo){font-size:9px;letter-spacing:1.6px;font-weight:900;color:#b9c8dd}
+.daily-stars{display:flex;justify-content:center;gap:5px;margin:13px 0 14px;font-size:31px;line-height:1}
+.star-earned{color:#ffe49a;text-shadow:0 0 18px #ffc76180}
+.star-empty{color:#46516d}
+.daily-hero-right>strong{font:700 24px 'Space Grotesk',sans-serif;color:#f4f5ff}
+.daily-hero-right>small{color:#a8b5cc;font-size:11px;margin-top:7px}
+.daily-stats{display:grid;grid-template-columns:repeat(4,1fr);padding:21px 26px}
+.daily-stats>div{display:flex;align-items:center;flex-direction:column;justify-content:center;gap:7px;border-right:1px solid #37425b}
+.daily-stats>div:last-child{border:0}
+.daily-stats span{font-size:9px;color:#94a4c2;font-weight:900;letter-spacing:1.1px}
+.daily-stats strong{font:700 26px 'Space Grotesk',sans-serif;color:#eff5ff}
+.daily-stats small{font-size:11px;font-weight:600;color:#9eacc2}
+.daily-rules{border-top:1px solid #333e58;padding:23px 30px 29px;background:#131c30}
+.daily-rules-heading{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:15px}
+.daily-rules-heading strong{font-size:10px;font-weight:900;letter-spacing:1.3px;color:#c3ed9a}
+.daily-rules-heading span{font-size:10px;color:#8e9dbb}
+.daily-rule-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.daily-rule-grid>div{display:flex;align-items:start;flex-direction:column;padding:16px;border:1px solid #364460;border-radius:10px;background:#1b253b}
+.rule-star{font-size:21px;letter-spacing:2px;color:#ffe2a1;margin-bottom:8px;line-height:1.1}
+.daily-rule-grid strong{font-size:10px;letter-spacing:1.1px;color:#f0f5fa}
+.daily-rule-grid p{font-size:11px;line-height:1.6;color:#a3b1ce;margin:7px 0 0}
+.daily-trophies{margin-top:34px}
+.daily-trophy-heading{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:17px}
+.daily-trophy-heading h3{font:700 26px 'Space Grotesk',sans-serif;letter-spacing:-.8px;margin:8px 0 0}
+.daily-trophy-heading h3 span{color:#b5fa6f}
+.daily-trophy-heading p{font-size:11px;color:#92a5c1;margin:0}
+.daily-trophy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.daily-trophy{display:flex;align-items:center;gap:12px;min-height:90px;padding:15px 13px;border:1px solid #35405d;border-radius:12px;background:#171f33}
+.daily-trophy.earned{background:linear-gradient(115deg,#243a31,#1b2934);border-color:#5b835d}
+.daily-trophy.locked{opacity:.61}
+.trophy-glyph{display:grid;place-items:center;width:43px;height:43px;flex:none;background:#263b3b;border:1px solid #45685a;border-radius:11px;font-size:25px;color:#c5fa81}
+.daily-trophy.locked .trophy-glyph{background:#293047;border-color:#454f6b;color:#8b99b6}
+.daily-trophy>div{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.daily-trophy strong{color:#eef5fe;font-size:12px;font-weight:900}
+.daily-trophy small{font-size:10px;line-height:1.45;color:#9eafc6}
+.trophy-status{color:#b6fa86;font-weight:900;font-size:17px}
+.daily-trophy.locked .trophy-status{color:#8290af}
+.daily-session-stars{display:flex;gap:4px;font-size:20px;color:#ffe2a1}
+.daily-session-stars span.unearned{color:#54617e}
+.daily-arena-hint{padding:14px 20px;margin:0 31px 18px;border:1px solid #4e604a;border-radius:9px;background:#202e2b;color:#bdcfad;font-size:11px;line-height:1.6;text-align:center}
+@media(min-width:741px) and (max-width:1100px){.daily-trophy-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:740px){
+  .daily-section{margin-top:44px}
+  .daily-hero{display:flex;flex-direction:column;align-items:stretch;gap:20px;padding:23px 18px}
+  .daily-hero-right{min-height:160px}
+  .daily-hero h3{font-size:30px}
+  .daily-stats{grid-template-columns:repeat(2,minmax(0,1fr));padding:18px 12px;gap:10px}
+  .daily-stats>div{min-height:65px}
+  .daily-stats>div:nth-child(2){border-right:0}
+  .daily-rules{padding:20px 16px}
+  .daily-rules-heading{align-items:start;flex-direction:column}
+  .daily-rule-grid{grid-template-columns:1fr}
+  .daily-rule-grid>div{min-height:0}
+  .daily-trophy-heading{flex-direction:column;align-items:start}
+  .daily-trophy-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .daily-trophy{flex-direction:column;align-items:start;min-height:140px}
+  .trophy-status{align-self:flex-end;margin-top:auto}
+  .daily-arena-hint{margin:0 17px 14px}
+}
+@media(max-width:400px){.daily-trophy-grid{gap:8px}.daily-trophy{padding:12px}}
+@media(prefers-reduced-motion:reduce){.daily-stars span{transition:none}}
+
+/* Seven modes: four wide, three tablet, two phone. */
+.mode-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(min-width:741px) and (max-width:1100px){.mode-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:740px){.mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
