@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Kombat from './Kombat.jsx';
+import PrecisionInsights from './PrecisionInsights.jsx';
+import {
+  ACCURACY_GOAL, PRECISION_KEY, emptyPrecision, readPrecision,
+  recordKeypresses, completePrecisionSession, focusKeys,
+  makePrecisionDrill, practiceFeedback, rankWeakKeys
+} from './precision.js';
 import { LESSONS, MODES, makeTarget, applyPeriodSpacing, readPeriodSpacing, SPACING_STORAGE_KEY, calculateStats, countCombo, defaultProfile, finishProfile, highestUnlocked, isLessonPassed, readProfile } from './game.js';
 
 const emptyRun = () => ({ typed: '', startedAt: null, finishedAt: null, strokes: 0, mistakes: 0 });
@@ -56,6 +62,10 @@ export default function App() {
   const [lessonIndex, setLessonIndex] = useState(0);
   const [periodSpaces, setPeriodSpaces] = useState(() => typeof window === 'undefined' ? 1 : readPeriodSpacing(window.localStorage));
   const [run, setRun] = useState(emptyRun);
+  const [precision, setPrecision] = useState(() =>
+    typeof window === 'undefined' ? emptyPrecision() : readPrecision(window.localStorage)
+  );
+  const [drill, setDrill] = useState({ focus: ['a','s','d'], variation: 0 });
   const [tick, setTick] = useState(Date.now());
   const [profile, setProfile] = useState(() => typeof window === 'undefined' ? defaultProfile() : readProfile(window.localStorage));
   const [focused, setFocused] = useState(false);
@@ -66,7 +76,12 @@ export default function App() {
   const audioRef = useRef(null);
   const selectedMode = MODES.find((item) => item.id === mode) || MODES[0];
   const lesson = LESSONS[lessonIndex];
-  const target = applyPeriodSpacing(makeTarget(mode, lessonIndex), periodSpaces);
+  const target = applyPeriodSpacing(
+    mode === 'precision'
+      ? makePrecisionDrill(drill.focus, drill.variation)
+      : makeTarget(mode, lessonIndex),
+    periodSpaces
+  );
   const limit = selectedMode.duration ? selectedMode.duration * 1000 : null;
   const elapsed = run.startedAt ? Math.max(0, Math.min(limit ?? Infinity, (run.finishedAt ?? tick) - run.startedAt)) : 0;
   const score = calculateStats(target, run.typed, elapsed, run.strokes, run.mistakes);
@@ -78,6 +93,17 @@ export default function App() {
   const remaining = limit === null ? null : Math.max(0, Math.ceil((limit - elapsed) / 1000));
   const current = target[run.typed.length] || '';
   const isFinished = run.finishedAt !== null;
+  const isTimed = limit !== null;
+  const progressValue = isTimed ? Math.min(100, Math.round(elapsed / limit * 100)) : score.progress;
+  const weakNow = rankWeakKeys(precision, 3);
+
+  // Only aggregate per-letter attempts and accuracy are saved, never typed passages.
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      try { window.localStorage.setItem(PRECISION_KEY, JSON.stringify(precision)); } catch { /* private browsing */ }
+    }, 300);
+    return () => window.clearTimeout(id);
+  }, [precision]);
 
   useEffect(() => {
     if (!run.startedAt || isFinished) return;
@@ -93,6 +119,7 @@ export default function App() {
   useEffect(() => {
     if (!run.finishedAt || savedFinish.current === run.finishedAt) return;
     savedFinish.current = run.finishedAt;
+    setPrecision((prior) => completePrecisionSession(prior, mode, score));
     setProfile((prior) => {
       const updated = finishProfile(prior, mode, lessonIndex, score, passed);
       try { window.localStorage.setItem('phityper-progress-v1', JSON.stringify(updated)); } catch { /* privacy settings */ }
@@ -119,6 +146,12 @@ export default function App() {
     } catch { /* unsupported audio device */ }
   }
   function restart(nextMode = mode, nextLesson = lessonIndex) {
+    if (nextMode === 'precision') {
+      setDrill((previous) => ({
+        focus: focusKeys(precision),
+        variation: previous.variation + 1
+      }));
+    }
     setMode(nextMode);
     setLessonIndex(nextLesson);
     setRun(emptyRun());
@@ -144,6 +177,7 @@ export default function App() {
     let strokes = run.strokes;
     let mistakes = run.mistakes;
     if (next.length > old.length) {
+      setPrecision((prior) => recordKeypresses(prior, target, old, next));
       for (let i = old.length; i < next.length; i += 1) {
         strokes += 1;
         const correct = next[i] === target[i];
@@ -172,7 +206,7 @@ export default function App() {
           <div className="eyebrow"><span className="eyebrow-line"/> TRAIN YOUR HANDS. FREE YOUR MIND.</div>
           <h1>FIND YOUR <em>FLOW.</em><br/>MASTER THE KEYS<span className="title-dot">.</span></h1>
           <p>From your very first keystroke to lightning-fast reflexes. Build speed, sharpen accuracy, and earn your black belt. One joyful session at a time.</p>
-          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 5 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
+          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 6 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
         </div>
         <div className="hero-emblem" aria-hidden="true"><div className="emblem-outer"><div className="emblem-middle"><div className="emblem-inner"><span>Φ</span><small>DOJO</small></div></div></div><span className="emblem-spark spark-a">✦</span><span className="emblem-spark spark-b">✧</span></div>
       </section>
@@ -202,11 +236,16 @@ export default function App() {
           })}
         </div>
       </section>}
+      {mode === 'precision' && <PrecisionInsights
+        profile={precision}
+        drill={drill}
+        onNewDrill={() => restart('precision')}
+      />}
       {mode === 'kombat' ? <Kombat /> : <section className="arena-section">
-        <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' ? '03' : '02'} / TRAINING ARENA</span><h2>Enter the dojo<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
+        <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' ? '03' : '02'} / TRAINING ARENA</span><h2>{mode === 'precision' ? 'Sharpen your accuracy' : 'Enter the dojo'}<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
         <div className="arena">
           <div className="arena-top">
-            <div className="arena-level"><span className="arena-label">{mode === 'dojo' ? 'CURRENT LESSON' : 'CURRENT CHALLENGE'}</span><h3>{mode === 'dojo' ? lesson.title : selectedMode.title}</h3><p>{mode === 'dojo' ? lesson.focus : selectedMode.subtitle}</p></div>
+            <div className="arena-level"><span className="arena-label">{mode === 'dojo' ? 'CURRENT LESSON' : 'CURRENT CHALLENGE'}</span><h3>{mode === 'dojo' ? lesson.title : selectedMode.title}</h3><p>{mode === 'dojo' ? lesson.focus : mode === 'precision' ? 'Target keys: ' + drill.focus.join(', ').toUpperCase() : selectedMode.subtitle}</p></div>
             <div className="arena-actions"><button type="button" className={'sound-btn' + (soundEnabled ? ' on' : '')} onClick={() => setSoundEnabled((v) => !v)} aria-label={soundEnabled ? 'Mute typing sounds' : 'Enable typing sounds'} aria-pressed={soundEnabled} title="Toggle gentle key sounds"><Icon name={soundEnabled ? 'sound' : 'mute'} size={18}/></button><button className="restart-btn" type="button" onClick={() => restart()}><Icon name="refresh" size={16}/> RESTART</button></div>
           </div>
           <div className="metrics-grid" aria-live="off">
@@ -225,8 +264,12 @@ export default function App() {
               <button type="button" aria-pressed={periodSpaces === 2} className={periodSpaces === 2 ? 'is-selected' : ''} onClick={() => changePeriodSpaces(2)}>2 spaces</button>
             </div>
           </div>
-          <div className="target-header"><span><Icon name="spark" size={15}/> {isFinished ? 'SESSION COMPLETE' : 'YOUR TARGET'}</span><span>{score.progress}% COMPLETE</span></div>
-          <div className="progress-bar"><div style={{ width: score.progress + '%' }}/></div>
+          <div className="target-header">
+            <span><Icon name="spark" size={15}/>{isTimed ? (isFinished ? 'TIMED CHALLENGE COMPLETE' : 'CHALLENGE CLOCK') : (isFinished ? 'SESSION COMPLETE' : 'YOUR TARGET')}</span>
+            <span>{isTimed ? Math.floor(elapsed / 1000) + ' / ' + (limit / 1000) + ' SEC · ' + run.typed.length + ' CHARACTERS' : score.progress + '% COMPLETE'}</span>
+          </div>
+          <div className="progress-bar"><div style={{ width: progressValue + '%' }}/></div>
+          {isTimed && <p className="timed-note">This bar measures your time, not the length of the passage. Your WPM and accuracy are the real score.</p>}
           <div className="typing-stage" onClick={activate} role="presentation">
             <TypingText target={target} typed={run.typed}/>
             <label htmlFor="dojo-input" className="input-label">{isFinished ? 'Session complete' : focused ? 'Keep typing below to follow the highlighted letters' : 'Click START TYPING, then follow the glowing cursor'}</label>
@@ -240,12 +283,25 @@ export default function App() {
           <div className="keyboard-heading"><Icon name="keyboard" size={16}/><span>KEYBOARD GUIDE</span><span className="keyboard-caption">GLOW = NEXT KEY</span></div>
           <Keyboard nextChar={current} lastKey={lastKey}/>
           {mode === 'dojo' && <div className="lesson-goal"><Icon name="target" size={17}/><span>TO EARN THIS BELT</span><strong>{lesson.targetWpm}+ WPM</strong><b>·</b><strong>{lesson.targetAccuracy}%+ ACCURACY</strong>{best && <span className="best-record">BEST {best.wpm} WPM / {best.accuracy}%</span>}</div>}
+          {mode === 'precision' && <div className="lesson-goal">
+            <Icon name="target" size={17}/><span>YOUR PRECISION GOAL</span><strong>{ACCURACY_GOAL}%+ ACCURACY</strong>
+            <span>Take your time. There is no speed requirement.</span>
+          </div>}
           {isFinished && <div className={'result-panel' + (passed ? ' victory' : '')} role="status" aria-live="polite">
             <div className="result-medallion">{passed ? '★' : mode === 'dojo' ? '↻' : '✦'}</div>
-            <div className="result-copy"><span>{passed ? 'BELT EARNED!' : mode === 'dojo' ? 'TRAINING COMPLETE' : 'ROUND COMPLETE'}</span><h3>{passed ? 'Beautiful work, keyboard warrior.' : mode === 'dojo' ? 'Every attempt makes you stronger.' : 'Your fingers found their rhythm.'}</h3><p>{score.wpm} WPM · {score.accuracy}% accuracy · {run.mistakes} missed keystrokes{mode === 'dojo' && !passed ? '. Reach both belt targets to advance.' : '.'}</p></div>
-            <div className="result-buttons">{canAdvance && <button className="next-btn" onClick={() => restart('dojo', nextUnlocked)}>NEXT BELT <Icon name="arrow" size={15}/></button>}<button className="again-btn" onClick={() => restart()}>TRY AGAIN</button></div>
+            <div className="result-copy"><span>{passed ? 'BELT EARNED!' : mode === 'dojo' ? 'TRAINING COMPLETE' : mode === 'precision' && score.accuracy >= ACCURACY_GOAL ? 'PRECISION GOAL MET' : 'ROUND COMPLETE'}</span><h3>{passed ? 'Beautiful work, keyboard warrior.' : mode === 'dojo' ? 'Every attempt makes you stronger.' : mode === 'precision' ? practiceFeedback(score.accuracy) : 'Your fingers found their rhythm.'}</h3><p>{score.wpm} WPM · {score.accuracy}% accuracy · {run.mistakes} missed keystrokes{mode === 'dojo' && !passed ? '. Reach both belt targets to advance.' : '.'}</p></div>
+            <div className="result-buttons">{canAdvance && <button className="next-btn" onClick={() => restart('dojo', nextUnlocked)}>NEXT BELT <Icon name="arrow" size={15}/></button>}<button className="again-btn" onClick={() => restart()}>{mode === 'precision' ? 'NEW ADAPTIVE DRILL' : 'TRY AGAIN'}</button></div>
           </div>}
         </div>
+      </section>}
+      {mode !== 'precision' && mode !== 'kombat' && isFinished && <section className="precision-nudge" aria-label="Personalized accuracy practice">
+        <div>
+          <strong>ACCURACY TRAINING UNLOCKED</strong>
+          <p>{weakNow.length
+            ? 'Recent tricky keys: ' + weakNow.map(item => item.key.toUpperCase()).join(', ') + '. Build accuracy with a personalized drill.'
+            : 'Start a Precision Lab drill to measure your toughest keys and work toward 98% accuracy.'}</p>
+        </div>
+        <button type="button" onClick={() => restart('precision')}>TRAIN MY WEAK KEYS ↗</button>
       </section>}
       <section className="footer-panels">
         <div className="footer-panel"><span className="panel-icon">◎</span><div><strong>Practice beats perfection.</strong><p>Even five minutes a day can help build muscle memory. Take breaks, relax your shoulders, and let your hands learn.</p></div></div>

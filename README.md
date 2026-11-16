@@ -10,10 +10,11 @@
 - **Speed Sprint:** a 60-second typing race.
 - **Zen Garden:** relaxed typing without a timer.
 - **Boss Rush:** a 45-second challenge.
+- **Precision Lab:** adaptive drills generated from your most error-prone letter keys, a QWERTY accuracy heatmap, a 98% accuracy target, and a chart of your last 12 completed training sessions. Aggregate key counts stay in localStorage; no passages or personal text are collected.
 - **Typing Kombat:** three-round arcade combat. Type complete words to throw punches, build combo bonuses, avoid timed enemy attacks, and unleash Φ Burst with Enter when special energy reaches 100%.
 - **Visual keyboard:** next-key highlighting for US QWERTY.
 - **Period spacing:** choose 1 or 2 spaces after a sentence period. Your preference is saved in this browser and updates Dojo, Sprint, Zen and Boss Rush passages without affecting saved belts. Changing the preference restarts the current attempt.
-- **Live metrics:** WPM, keystroke accuracy, combo, and progress.
+- **Live metrics:** WPM, keystroke accuracy, combo, and progress. Timed Sprint/Boss Rush progress bars now show elapsed time (not percent of a deliberately long passage).
 - **Optional sound:** off by default; sound is synthesized in the browser.
 - **Private local progress:** belt unlocks, attempts and best records live in localStorage. No backend, analytics, advertisements or sign-in.
 
