@@ -254,7 +254,7 @@ export default function App() {
         drill={drill}
         onNewDrill={() => restart('precision')}
       />}
-      {mode === 'kombat' ? <Kombat /> : <section className="arena-section">
+      {mode === 'kombat' ? <Kombat /> : <section id={mode === 'daily' ? 'daily-arena' : undefined} className="arena-section">
         <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' || mode === 'daily' ? '03' : '02'} / TRAINING ARENA</span><h2>{mode === 'precision' ? 'Sharpen your accuracy' : mode === 'daily' ? 'Take today’s quest' : 'Enter the dojo'}<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
         <div className="arena">
           <div className="arena-top">
