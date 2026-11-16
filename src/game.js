@@ -1,4 +1,5 @@
 import { makePrecisionDrill } from './precision.js';
+import { makeDailyPassage, localDayKey, DAILY_SECONDS } from './daily.js';
 
 export const LESSONS = [
   { title: 'The First Strike', belt: 'White', focus: 'Home row · a s d f j k l ;', targetWpm: 8, targetAccuracy: 82,
@@ -26,7 +27,8 @@ export const MODES = [
   { id: 'zen', title: 'Zen Garden', subtitle: 'No clock, just flow', glyph: '◌', duration: null },
   { id: 'boss', title: 'Boss Rush', subtitle: '45 seconds of chaos', glyph: '⚡', duration: 45 },
   { id: 'kombat', title: 'Typing Kombat', subtitle: 'Words are punches', glyph: '⚔', duration: null },
-  { id: 'precision', title: 'Precision Lab', subtitle: 'Train your weak keys', glyph: '◎', duration: null }
+  { id: 'precision', title: 'Precision Lab', subtitle: 'Train your weak keys', glyph: '◎', duration: null },
+  { id: 'daily', title: 'Daily Dojo', subtitle: 'Fresh challenge daily', glyph: '☼', duration: DAILY_SECONDS }
 ];
 const LONG_TEXT = [
   'A curious mind can make a tiny spark into a bright idea.',
@@ -45,7 +47,8 @@ const ZEN_TEXT = [
   'If you miss a key, simply correct it and move on. Accuracy is a habit made from thousands of little choices.',
   'Your hands can learn the path without your eyes having to chase every letter. Keep practicing, and enjoy the process.'
 ].join(' ');
-export function makeTarget(mode, lessonIndex = 0) {
+export function makeTarget(mode, lessonIndex = 0, dayKey = localDayKey(new Date())) {
+  if (mode === 'daily') return makeDailyPassage(dayKey);
   if (mode === 'dojo') return LESSONS[lessonIndex]?.text ?? LESSONS[0].text;
   if (mode === 'precision') return makePrecisionDrill(['a', 's', 'd'], lessonIndex);
   if (mode === 'zen') return ZEN_TEXT;

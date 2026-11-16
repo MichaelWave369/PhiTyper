@@ -10,6 +10,7 @@
 - **Speed Sprint:** a 60-second typing race.
 - **Zen Garden:** relaxed typing without a timer.
 - **Boss Rush:** a 45-second challenge.
+- **Daily Dojo:** a consistent new 60-second passage each local calendar day. Earn up to three stars per day with speed/accuracy goals, replay for better scores, and build streaks. A trophy shelf recognizes both existing belts and new daily achievements. Stored only in the browser; the daily challenge is generated offline.
 - **Precision Lab:** adaptive drills generated from your most error-prone letter keys, a QWERTY accuracy heatmap, a 98% accuracy target, and a chart of your last 12 completed training sessions. Aggregate key counts stay in localStorage; no passages or personal text are collected.
 - **Typing Kombat:** three-round arcade combat. Type complete words to throw punches, build combo bonuses, avoid timed enemy attacks, and unleash Φ Burst with Enter when special energy reaches 100%.
 - **Visual keyboard:** next-key highlighting for US QWERTY.

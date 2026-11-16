@@ -4,4 +4,5 @@ import App from './App.jsx';
 import './styles.css';
 import './kombat.css';
 import './precision.css';
+import './daily.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><App /></React.StrictMode>);
