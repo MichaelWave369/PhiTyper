@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { LESSONS, MODES, makeTarget, calculateStats, countCombo, defaultProfile, finishProfile, highestUnlocked, isLessonPassed, readProfile } from './game.js';
 
 const emptyRun = () => ({ typed: '', startedAt: null, finishedAt: null, strokes: 0, mistakes: 0 });
