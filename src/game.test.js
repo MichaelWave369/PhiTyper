@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LESSONS, MODES, makeTarget, calculateStats, isLessonPassed, countCombo, readProfile, finishProfile, highestUnlocked } from './game.js';
+import { LESSONS, MODES, makeTarget, calculateStats, isLessonPassed, countCombo, applyPeriodSpacing, readPeriodSpacing, readProfile, finishProfile, highestUnlocked } from './game.js';
 test('all nine belts have useful original exercises', () => {
   assert.equal(LESSONS.length, 9);
   assert.equal(new Set(LESSONS.map((l) => l.title)).size, 9);
@@ -38,4 +38,22 @@ test('local storage fallback and progression work', () => {
   const replay = finishProfile(first, 'dojo', 0, { wpm: 10, accuracy: 88 }, false);
   assert.equal(replay.best['dojo-0'].wpm, 15);
   assert.deepEqual(replay.cleared, [0]);
+});
+
+test('one or two spaces after periods are applied to all relevant passages', () => {
+  const original = 'First sentence. Next sentence. Last.  Again. End.';
+  assert.equal(applyPeriodSpacing(original, 1), 'First sentence. Next sentence. Last. Again. End.');
+  assert.equal(applyPeriodSpacing(original, 2), 'First sentence.  Next sentence.  Last.  Again.  End.');
+  assert.equal(applyPeriodSpacing(applyPeriodSpacing(original, 2), 2), applyPeriodSpacing(original, 2));
+  assert.equal(applyPeriodSpacing('3.14 is pi. Yes!', 2), '3.14 is pi.  Yes!');
+  for (const mode of MODES) {
+    const passage = makeTarget(mode.id, 0);
+    assert.ok(applyPeriodSpacing(passage, 2).length >= applyPeriodSpacing(passage, 1).length);
+  }
+});
+test('spacing preference survives reload and falls back safely', () => {
+  assert.equal(readPeriodSpacing({ getItem: () => '2' }), 2);
+  assert.equal(readPeriodSpacing({ getItem: () => '1' }), 1);
+  assert.equal(readPeriodSpacing({ getItem: () => 'garbage' }), 1);
+  assert.equal(readPeriodSpacing({ getItem: () => { throw Error('blocked'); } }), 1);
 });

@@ -48,6 +48,23 @@ export function makeTarget(mode, lessonIndex = 0) {
   const source = mode === 'boss' ? [...LONG_TEXT].reverse() : LONG_TEXT;
   return Array.from({ length: 8 }, (_, i) => source.slice(i % source.length).join(' ')).join(' ');
 }
+export const SPACING_STORAGE_KEY = 'phityper-spacing-v1';
+
+// Normalize only sentence-ending periods followed by one or more spaces.
+// Keep decimals, abbreviations without following spaces and end-of-passage periods unchanged.
+export function applyPeriodSpacing(text, spaces = 1) {
+  const count = spaces === 2 ? 2 : 1;
+  return text.replace(/\. +(?=\S)/g, '.' + ' '.repeat(count));
+}
+
+export function readPeriodSpacing(storage) {
+  try {
+    return storage.getItem(SPACING_STORAGE_KEY) === '2' ? 2 : 1;
+  } catch {
+    return 1;
+  }
+}
+
 export function calculateStats(target, typed, elapsedMs = 0, strokes = 0, mistakes = 0) {
   let correct = 0;
   for (let i = 0; i < typed.length; i += 1) if (typed[i] === target[i]) correct += 1;

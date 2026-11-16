@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Kombat from './Kombat.jsx';
-import { LESSONS, MODES, makeTarget, calculateStats, countCombo, defaultProfile, finishProfile, highestUnlocked, isLessonPassed, readProfile } from './game.js';
+import { LESSONS, MODES, makeTarget, applyPeriodSpacing, readPeriodSpacing, SPACING_STORAGE_KEY, calculateStats, countCombo, defaultProfile, finishProfile, highestUnlocked, isLessonPassed, readProfile } from './game.js';
 
 const emptyRun = () => ({ typed: '', startedAt: null, finishedAt: null, strokes: 0, mistakes: 0 });
 const KEY_ROWS = [
@@ -54,6 +54,7 @@ function TypingText({ target, typed }) {
 export default function App() {
   const [mode, setMode] = useState('dojo');
   const [lessonIndex, setLessonIndex] = useState(0);
+  const [periodSpaces, setPeriodSpaces] = useState(() => typeof window === 'undefined' ? 1 : readPeriodSpacing(window.localStorage));
   const [run, setRun] = useState(emptyRun);
   const [tick, setTick] = useState(Date.now());
   const [profile, setProfile] = useState(() => typeof window === 'undefined' ? defaultProfile() : readProfile(window.localStorage));
@@ -65,7 +66,7 @@ export default function App() {
   const audioRef = useRef(null);
   const selectedMode = MODES.find((item) => item.id === mode) || MODES[0];
   const lesson = LESSONS[lessonIndex];
-  const target = makeTarget(mode, lessonIndex);
+  const target = applyPeriodSpacing(makeTarget(mode, lessonIndex), periodSpaces);
   const limit = selectedMode.duration ? selectedMode.duration * 1000 : null;
   const elapsed = run.startedAt ? Math.max(0, Math.min(limit ?? Infinity, (run.finishedAt ?? tick) - run.startedAt)) : 0;
   const score = calculateStats(target, run.typed, elapsed, run.strokes, run.mistakes);
@@ -125,6 +126,13 @@ export default function App() {
     setFocused(false);
     setTick(Date.now());
     savedFinish.current = null;
+  }
+  function changePeriodSpaces(next) {
+    if (next === periodSpaces) return;
+    setPeriodSpaces(next);
+    try { window.localStorage.setItem(SPACING_STORAGE_KEY, String(next)); } catch { /* storage unavailable */ }
+    // The exercise itself changes, so begin a fresh attempt without erasing saved belts.
+    restart();
   }
   function activate() { if (!isFinished) inputRef.current?.focus(); }
   function handleChange(event) {
@@ -206,6 +214,16 @@ export default function App() {
             <div className="metric"><span>ACCURACY</span><strong>{score.accuracy}<small>%</small></strong></div>
             <div className="metric"><span>{remaining !== null ? 'TIME LEFT' : 'TIME'}</span><strong>{remaining !== null ? remaining : Math.floor(elapsed / 1000)}<small> SEC</small></strong></div>
             <div className="metric"><span>COMBO</span><strong>{combo}<small> HITS</small></strong></div>
+          </div>
+          <div className="spacing-preference">
+            <div className="spacing-explainer">
+              <strong>AFTER A PERIOD</strong>
+              <span>Choose how you naturally type. Switching starts a fresh attempt.</span>
+            </div>
+            <div className="spacing-options" role="group" aria-label="Spaces after a period">
+              <button type="button" aria-pressed={periodSpaces === 1} className={periodSpaces === 1 ? 'is-selected' : ''} onClick={() => changePeriodSpaces(1)}>1 space</button>
+              <button type="button" aria-pressed={periodSpaces === 2} className={periodSpaces === 2 ? 'is-selected' : ''} onClick={() => changePeriodSpaces(2)}>2 spaces</button>
+            </div>
           </div>
           <div className="target-header"><span><Icon name="spark" size={15}/> {isFinished ? 'SESSION COMPLETE' : 'YOUR TARGET'}</span><span>{score.progress}% COMPLETE</span></div>
           <div className="progress-bar"><div style={{ width: score.progress + '%' }}/></div>
