@@ -9,9 +9,9 @@ function StarRow({ count, label }) {
   </div>;
 }
 
-export default function DailyBoard({ dayKey, daily, profile, precision }) {
+export default function DailyBoard({ dayKey, daily, profile, precision, rainRecord = null }) {
   const record = daily.days[dayKey];
-  const trophies = earnedTrophies({profile, precision, daily});
+  const trophies = earnedTrophies({profile, precision, daily, rain:rainRecord});
   const earned = trophies.filter(item => item.earned).length;
   const activeStreak = dailyStreak(daily, dayKey);
   const longestStreak = bestDailyStreak(daily);

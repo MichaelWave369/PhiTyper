@@ -144,10 +144,11 @@ export const TROPHIES = [
   { id: 'daily', name: 'Daily Explorer', icon: '☼', description: 'Earn your first Daily Dojo star.' },
   { id: 'three', name: 'Three-Day Rhythm', icon: '♬', description: 'Earn stars on three consecutive local calendar days.' },
   { id: 'seven', name: 'Seven-Day Flame', icon: '✳', description: 'Earn stars on seven consecutive local calendar days.' },
-  { id: 'master', name: 'Perfect Quest', icon: '★', description: 'Earn three stars on any Daily Dojo challenge.' }
+  { id: 'master', name: 'Perfect Quest', icon: '★', description: 'Earn three stars on any Daily Dojo challenge.' },
+  { id: 'storm', name: 'Storm Chaser', icon: '☂', description: 'Clear ten or more words in one Word Rain run.' }
 ];
 
-export function earnedTrophies({ profile, precision, daily }) {
+export function earnedTrophies({ profile, precision, daily, rain = null }) {
   const sessions = Number(profile?.sessions ?? 0);
   const scores = Object.values(profile?.best ?? {});
   const history = precision?.history ?? [];
@@ -161,7 +162,8 @@ export function earnedTrophies({ profile, precision, daily }) {
     daily: days.some(s => s.stars >= 1),
     three: longest >= 3,
     seven: longest >= 7,
-    master: days.some(s => s.stars === 3)
+    master: days.some(s => s.stars === 3),
+    storm: (rain?.words ?? 0) >= 10
   };
   return TROPHIES.map(trophy => ({ ...trophy, earned: Boolean(flags[trophy.id]) }));
 }

@@ -38,6 +38,10 @@ try {
   assert.match(board, /Daily Dojo/);
   assert.match(board, /Black Belt/);
   assert.match(board, /Lightning Fingers/);
+  const { default: WordRain } = await server.ssrLoadModule('/src/WordRain.jsx');
+  const rainy = renderToString(React.createElement(WordRain));
+  assert.match(rainy, /CATCH THE WORDS/);
+  assert.match(rainy, /START WORD RAIN/);
   console.log('React app render smoke test passed.');
 } finally {
   await server.close();

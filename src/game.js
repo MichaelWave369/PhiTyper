@@ -28,7 +28,8 @@ export const MODES = [
   { id: 'boss', title: 'Boss Rush', subtitle: '45 seconds of chaos', glyph: '⚡', duration: 45 },
   { id: 'kombat', title: 'Typing Kombat', subtitle: 'Words are punches', glyph: '⚔', duration: null },
   { id: 'precision', title: 'Precision Lab', subtitle: 'Train your weak keys', glyph: '◎', duration: null },
-  { id: 'daily', title: 'Daily Dojo', subtitle: 'Fresh challenge daily', glyph: '☼', duration: DAILY_SECONDS }
+  { id: 'daily', title: 'Daily Dojo', subtitle: 'Fresh challenge daily', glyph: '☼', duration: DAILY_SECONDS },
+  { id: 'rain', title: 'Word Rain', subtitle: 'Catch falling words', glyph: '☂', duration: null }
 ];
 const LONG_TEXT = [
   'A curious mind can make a tiny spark into a bright idea.',

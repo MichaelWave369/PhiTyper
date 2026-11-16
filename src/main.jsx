@@ -5,4 +5,5 @@ import './styles.css';
 import './kombat.css';
 import './precision.css';
 import './daily.css';
+import './rain.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><App /></React.StrictMode>);
