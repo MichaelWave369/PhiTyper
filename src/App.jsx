@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import Kombat from './Kombat.jsx';
 import PrecisionInsights from './PrecisionInsights.jsx';
 import DailyBoard from './DailyBoard.jsx';
+import WordRain from './WordRain.jsx';
+import { readRainRecord } from './rain.js';
 import {
   DAILY_STORAGE_KEY, emptyDaily, readDaily, saveDaily,
   localDayKey, dailyStars, completeDaily
@@ -64,6 +66,8 @@ function TypingText({ target, typed }) {
 
 export default function App() {
   const [mode, setMode] = useState('dojo');
+  const [rainRecord, setRainRecord] = useState(() => typeof window === 'undefined'
+    ? { score:0, words:0, combo:0, runs:0 } : readRainRecord(window.localStorage));
   const [dailyDay, setDailyDay] = useState(() => localDayKey(new Date()));
   const [daily, setDaily] = useState(() => typeof window === 'undefined' ? emptyDaily() : readDaily(window.localStorage));
   const [lessonIndex, setLessonIndex] = useState(0);
@@ -218,7 +222,7 @@ export default function App() {
           <div className="eyebrow"><span className="eyebrow-line"/> TRAIN YOUR HANDS. FREE YOUR MIND.</div>
           <h1>FIND YOUR <em>FLOW.</em><br/>MASTER THE KEYS<span className="title-dot">.</span></h1>
           <p>From your very first keystroke to lightning-fast reflexes. Build speed, sharpen accuracy, and earn your black belt. One joyful session at a time.</p>
-          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 7 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
+          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 8 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
         </div>
         <div className="hero-emblem" aria-hidden="true"><div className="emblem-outer"><div className="emblem-middle"><div className="emblem-inner"><span>Φ</span><small>DOJO</small></div></div></div><span className="emblem-spark spark-a">✦</span><span className="emblem-spark spark-b">✧</span></div>
       </section>
@@ -248,13 +252,13 @@ export default function App() {
           })}
         </div>
       </section>}
-      {mode === 'daily' && <DailyBoard dayKey={dailyDay} daily={daily} profile={profile} precision={precision}/>}
+      {mode === 'daily' && <DailyBoard dayKey={dailyDay} daily={daily} profile={profile} precision={precision} rainRecord={rainRecord}/>}
       {mode === 'precision' && <PrecisionInsights
         profile={precision}
         drill={drill}
         onNewDrill={() => restart('precision')}
       />}
-      {mode === 'kombat' ? <Kombat /> : <section id={mode === 'daily' ? 'daily-arena' : undefined} className="arena-section">
+      {mode === 'kombat' ? <Kombat /> : mode === 'rain' ? <WordRain onRecordChange={setRainRecord} /> : <section id={mode === 'daily' ? 'daily-arena' : undefined} className="arena-section">
         <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' || mode === 'daily' ? '03' : '02'} / TRAINING ARENA</span><h2>{mode === 'precision' ? 'Sharpen your accuracy' : mode === 'daily' ? 'Take today’s quest' : 'Enter the dojo'}<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
         <div className="arena">
           <div className="arena-top">

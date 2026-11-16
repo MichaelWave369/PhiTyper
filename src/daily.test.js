@@ -74,3 +74,12 @@ test('local storage rejects invalid records and caps the history', () => {
   assert.ok(Object.keys(p.days).length <= DAILY_HISTORY_LIMIT);
   assert.equal(p.days['2026-11-99'], undefined);
 });
+
+test('Storm Chaser trophy unlocks from Word Rain locally saved best clear count', () => {
+  const args={profile:{sessions:0,best:{},cleared:[]},precision:{history:[]},daily:emptyDaily()};
+  const before=earnedTrophies({...args,rain:{words:9}});
+  const after=earnedTrophies({...args,rain:{words:10}});
+  assert.equal(before.find(t=>t.id==='storm').earned,false);
+  assert.equal(after.find(t=>t.id==='storm').earned,true);
+  assert.equal(TROPHIES.length,9);
+});

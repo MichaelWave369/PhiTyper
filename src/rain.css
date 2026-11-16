@@ -1,0 +1,69 @@
+/* Word Rain: original CSS arcade storm, no external assets */
+.rain-section{margin-top:62px}
+.rain-shell{overflow:hidden;border:1px solid #354766;border-radius:17px;background:linear-gradient(135deg,#1a2340,#111a2d);box-shadow:0 24px 75px #0004}
+.rain-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 30px;border-bottom:1px solid #34435f}
+.rain-overline{color:#b9fa85;letter-spacing:1.7px;font-size:10px;font-weight:900}
+.rain-header h3{font:700 24px 'Space Grotesk',sans-serif;letter-spacing:-.65px;margin:7px 0 0}
+.rain-record{text-align:right;display:flex;flex-direction:column;gap:4px}
+.rain-record span,.rain-record small{font-size:9px;color:#9eb0cb;letter-spacing:1.1px;font-weight:800}
+.rain-record strong{font:700 26px 'Space Grotesk',sans-serif;color:#d9ffa7}
+.rain-hud{display:grid;grid-template-columns:repeat(5,1fr);background:#0f182d;padding:16px 18px;border-bottom:1px solid #314362}
+.rain-hud>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-right:1px solid #34445e;min-width:0}
+.rain-hud>div:last-child{border:0}
+.rain-hud span{font-size:9px;letter-spacing:1.15px;font-weight:900;color:#92a5c6}
+.rain-hud strong{font:700 24px 'Space Grotesk',sans-serif;color:#e5f0ff}
+.rain-hud strong small{font-size:11px;color:#859ab7}
+.rain-hearts strong{font-size:24px;color:#ff829b;letter-spacing:3px}.rain-hearts i{font-style:normal;color:#596580}
+.rain-field{position:relative;isolation:isolate;height:385px;overflow:hidden;background:radial-gradient(ellipse at 50% 82%,#273b6970,transparent 60%),linear-gradient(180deg,#121a35,#223257 69%,#111e35);border-bottom:2px solid #5a7b92}
+.rain-field:before{content:'';position:absolute;inset:0;z-index:-2;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 155px,#91acd109 156px 158px,transparent 160px 270px)}
+.rain-orbit{position:absolute;z-index:-1;border-radius:50%;border:1px solid #91bcfc18;pointer-events:none}
+.orbit-one{width:420px;height:420px;top:-300px;left:12%}.orbit-two{width:500px;height:500px;top:-350px;right:-80px}
+.rain-cloud{position:absolute;z-index:-1;color:#8c9fda24;font-size:145px;line-height:1;pointer-events:none}
+.cloud-one{left:8%;top:-56px}.cloud-two{right:15%;top:-63px}.cloud-three{left:46%;top:-65px}
+.rain-falls{pointer-events:none;z-index:-1;position:absolute;inset:0;opacity:.45;background:repeating-linear-gradient(100deg,transparent 0 19px,#a9bbfe27 21px 22px,transparent 23px 64px);mask-image:linear-gradient(to bottom,#000 0%,#0009 75%,transparent 100%)}
+.rain-grid-lines{position:absolute;inset:0;pointer-events:none;opacity:.4;background:repeating-linear-gradient(180deg,transparent 0 71px,#bedfff10 72px 73px,transparent 74px 91px)}
+.rain-danger-line{position:absolute;left:0;right:0;bottom:0;height:7px;background:#f67596;box-shadow:0 -8px 35px #f6759660,0 0 23px #f67596}
+.rain-danger-line:before{content:'DANGER ZONE';position:absolute;right:17px;bottom:15px;font:900 9px 'DM Sans',sans-serif;letter-spacing:1px;color:#e8aab7}
+.rain-drop{position:absolute;z-index:3;display:flex;align-items:center;justify-content:center;gap:5px;width:31%;height:37px;min-width:0;padding:7px 6px;border:1px solid #7b9acb;border-radius:12px;background:linear-gradient(140deg,#2c4366,#243157);color:#eef7ff;box-shadow:0 6px 12px #0006,0 0 13px #8091ea36;transform:translateY(-50%);transition:top .10s linear;white-space:nowrap}
+.rain-drop-dot{color:#a5dbff;font-size:14px}
+.rain-drop-word{font:800 clamp(12px,1.45vw,18px) 'Space Grotesk',sans-serif;letter-spacing:.3px;overflow:hidden;text-overflow:ellipsis}
+.rain-drop.is-targeted{border-color:#c6fb84;box-shadow:0 0 0 2px #c6fb843c,0 0 26px #b5fa6f40;background:linear-gradient(140deg,#314e49,#243d46)}
+.rain-drop .rain-hit-letter{color:#c1ff82}
+.rain-drop.is-dangerous{border-color:#ff9bb0;box-shadow:0 0 14px #fd648a66;background:linear-gradient(140deg,#61334f,#3a2c54)}
+.rain-overlay{position:absolute;z-index:7;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 20px;background:#0b1226cf;backdrop-filter:blur(5px)}
+.rain-overlay-symbol{font-size:60px;color:#b5fa9d;margin-bottom:8px}
+.rain-overlay>span{color:#b5fa7c;font-size:10px;font-weight:900;letter-spacing:1.8px}
+.rain-overlay h4{font:800 clamp(22px,4vw,36px) 'Space Grotesk',sans-serif;letter-spacing:-1px;margin:12px 0}
+.rain-overlay p{color:#bbc8df;line-height:1.7;font-size:12px;max-width:410px;margin:0 0 20px}
+.rain-main-button{border:0;border-radius:9px;background:#b5fa6f;color:#102025;padding:14px 18px;display:flex;gap:16px;align-items:center;font-size:11px;letter-spacing:1px;font-weight:900}
+.rain-main-button span{font-size:19px}.rain-main-button:hover{background:#d3ffa0}
+.rain-controls{padding:23px 29px}
+.rain-target-hint{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:15px}
+.rain-target-hint>div:first-child{display:flex;flex-direction:column;gap:5px}
+.rain-target-hint strong{color:#b9fa88;font-size:10px;letter-spacing:1.15px;font-weight:900}
+.rain-target-hint span{color:#a7b8d3;font-size:11px}
+.rain-arcade-actions{display:flex;gap:7px}
+.rain-arcade-actions button{background:#253450;color:#d9e7fc;border:1px solid #4b617f;border-radius:7px;padding:10px 13px;font-size:10px;letter-spacing:.8px;font-weight:900}
+.rain-arcade-actions button:hover{border-color:#b5fa6f}
+.rain-arcade-actions .rain-end-button{border-color:#8c5367;color:#fecad4}
+.rain-input{width:100%;height:55px;padding:14px 18px;border:1px solid #516783;border-radius:10px;background:#0e172b;color:#e8ffd4;font:700 20px 'Space Grotesk',sans-serif;letter-spacing:1px;text-align:center;outline:none}
+.rain-input:focus{border-color:#b5fa6f;box-shadow:0 0 0 3px #b5fa6f20}
+.rain-input:disabled{opacity:.6}
+.rain-input::placeholder{font:500 13px 'DM Sans',sans-serif;letter-spacing:0;color:#8a9fbc}
+.rain-feedback{padding:13px 8px;min-height:38px;color:#b5f58c;text-align:center;font-size:10px;font-weight:900;letter-spacing:1.1px}
+.rain-lower-stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #35465f;border-radius:10px;background:#111a30}
+.rain-lower-stats>div{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px;border-right:1px solid #35465f}
+.rain-lower-stats>div:last-child{border:0}
+.rain-lower-stats span{color:#8ea5c3;font-size:9px;letter-spacing:1px;font-weight:800}
+.rain-lower-stats strong{color:#ecf5ff;font:700 23px 'Space Grotesk',sans-serif}
+.rain-rule-line{color:#7f93b2;font-size:9px;font-weight:900;letter-spacing:1px;line-height:1.8;text-align:center;margin-top:20px}
+@media(max-width:740px){
+.rain-section{margin-top:45px}
+.rain-header{padding:18px;align-items:flex-start;flex-direction:column}
+.rain-header h3{font-size:19px}.rain-record{align-items:flex-start;text-align:left}
+.rain-hud{padding:11px 4px}.rain-hud strong{font-size:18px}.rain-hud span{font-size:7px}.rain-hearts strong{font-size:15px;letter-spacing:0}
+.rain-field{height:365px}.rain-drop{height:38px;padding:6px 3px;gap:3px;border-radius:9px}.rain-drop-word{font-size:clamp(10px,2.75vw,14px)}.rain-drop-dot{font-size:10px}
+.rain-controls{padding:18px 13px}.rain-target-hint{align-items:flex-start;flex-direction:column}.rain-arcade-actions{width:100%}.rain-arcade-actions button{flex:1}
+.rain-lower-stats span{font-size:7px}.rain-lower-stats strong{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){.rain-drop{transition:none}.rain-falls{opacity:.12}}
