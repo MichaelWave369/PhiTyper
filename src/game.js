@@ -1,3 +1,5 @@
+import { makePrecisionDrill } from './precision.js';
+
 export const LESSONS = [
   { title: 'The First Strike', belt: 'White', focus: 'Home row · a s d f j k l ;', targetWpm: 8, targetAccuracy: 82,
     text: 'asdf jkl; asdf jkl; sad lad; flask; salad; ask dad; all fall; a sad lad;' },
@@ -23,7 +25,8 @@ export const MODES = [
   { id: 'sprint', title: 'Speed Sprint', subtitle: '60-second rush', glyph: '↗', duration: 60 },
   { id: 'zen', title: 'Zen Garden', subtitle: 'No clock, just flow', glyph: '◌', duration: null },
   { id: 'boss', title: 'Boss Rush', subtitle: '45 seconds of chaos', glyph: '⚡', duration: 45 },
-  { id: 'kombat', title: 'Typing Kombat', subtitle: 'Words are punches', glyph: '⚔', duration: null }
+  { id: 'kombat', title: 'Typing Kombat', subtitle: 'Words are punches', glyph: '⚔', duration: null },
+  { id: 'precision', title: 'Precision Lab', subtitle: 'Train your weak keys', glyph: '◎', duration: null }
 ];
 const LONG_TEXT = [
   'A curious mind can make a tiny spark into a bright idea.',
@@ -44,6 +47,7 @@ const ZEN_TEXT = [
 ].join(' ');
 export function makeTarget(mode, lessonIndex = 0) {
   if (mode === 'dojo') return LESSONS[lessonIndex]?.text ?? LESSONS[0].text;
+  if (mode === 'precision') return makePrecisionDrill(['a', 's', 'd'], lessonIndex);
   if (mode === 'zen') return ZEN_TEXT;
   const source = mode === 'boss' ? [...LONG_TEXT].reverse() : LONG_TEXT;
   return Array.from({ length: 8 }, (_, i) => source.slice(i % source.length).join(' ')).join(' ');

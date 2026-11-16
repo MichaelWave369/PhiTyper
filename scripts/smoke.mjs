@@ -22,6 +22,13 @@ try {
   const arcade = renderToString(React.createElement(Kombat));
   assert.match(arcade, /THE THREE TRIALS/);
   assert.match(arcade, /START FIGHT/);
+  const { default: PrecisionInsights } = await server.ssrLoadModule('/src/PrecisionInsights.jsx');
+  const { emptyPrecision } = await server.ssrLoadModule('/src/precision.js');
+  const insights = renderToString(React.createElement(PrecisionInsights, {
+    profile: emptyPrecision(), drill: { focus: ['a','s','d'], variation: 0 },
+    onNewDrill: () => {}
+  }));
+  assert.match(insights, /ACCURACY HEATMAP/);
   console.log('React app render smoke test passed.');
 } finally {
   await server.close();

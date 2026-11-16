@@ -6,7 +6,7 @@ test('all nine belts have useful original exercises', () => {
   assert.equal(new Set(LESSONS.map((l) => l.title)).size, 9);
   for (const lesson of LESSONS) assert.ok(lesson.text.length > 35);
 });
-test('all five modes provide meaningful typing passages', () => {
+test('all six modes provide meaningful typing passages', () => {
   for (const mode of MODES) assert.ok(makeTarget(mode.id, 0).length > 50);
 });
 test('accuracy counts actual keystrokes including mistakes', () => {
