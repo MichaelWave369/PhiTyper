@@ -10,6 +10,7 @@
 - **Speed Sprint:** a 60-second typing race.
 - **Zen Garden:** relaxed typing without a timer.
 - **Boss Rush:** a 45-second challenge.
+- **Typing Kombat:** three-round arcade combat. Type complete words to throw punches, build combo bonuses, avoid timed enemy attacks, and unleash Φ Burst with Enter when special energy reaches 100%.
 - **Visual keyboard:** next-key highlighting for US QWERTY.
 - **Live metrics:** WPM, keystroke accuracy, combo, and progress.
 - **Optional sound:** off by default; sound is synthesized in the browser.
@@ -37,6 +38,6 @@ Vite uses the repository-specific base path /PhiTyper/ so bundled assets work co
 
 ## Design notes
 
-Requires a keyboard (physical or on-screen) and a modern browser. US QWERTY is the only visual keyboard layout in this first version, although typing itself uses standard browser input. The game has no online leaderboard or anti-cheat system. Progress is per browser and is lost when site data is cleared.
+Requires a keyboard (physical or on-screen) and a modern browser. US QWERTY is the only visual keyboard layout in this first version, although typing itself uses standard browser input. Typing Kombat's enemy rules are deterministic, and its victory record is stored locally in your browser. The game has no online leaderboard or anti-cheat system. Progress is per browser and is lost when site data is cleared.
 
 MIT licensed. Learning should be free, and the dojo is open to everybody.

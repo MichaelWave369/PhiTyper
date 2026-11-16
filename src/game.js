@@ -22,7 +22,8 @@ export const MODES = [
   { id: 'dojo', title: 'Belt Dojo', subtitle: 'Learn step by step', glyph: '道', duration: null },
   { id: 'sprint', title: 'Speed Sprint', subtitle: '60-second rush', glyph: '↗', duration: 60 },
   { id: 'zen', title: 'Zen Garden', subtitle: 'No clock, just flow', glyph: '◌', duration: null },
-  { id: 'boss', title: 'Boss Rush', subtitle: '45 seconds of chaos', glyph: '⚡', duration: 45 }
+  { id: 'boss', title: 'Boss Rush', subtitle: '45 seconds of chaos', glyph: '⚡', duration: 45 },
+  { id: 'kombat', title: 'Typing Kombat', subtitle: 'Words are punches', glyph: '⚔', duration: null }
 ];
 const LONG_TEXT = [
   'A curious mind can make a tiny spark into a bright idea.',

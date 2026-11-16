@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Kombat from './Kombat.jsx';
 import { LESSONS, MODES, makeTarget, calculateStats, countCombo, defaultProfile, finishProfile, highestUnlocked, isLessonPassed, readProfile } from './game.js';
 
 const emptyRun = () => ({ typed: '', startedAt: null, finishedAt: null, strokes: 0, mistakes: 0 });
@@ -163,7 +164,7 @@ export default function App() {
           <div className="eyebrow"><span className="eyebrow-line"/> TRAIN YOUR HANDS. FREE YOUR MIND.</div>
           <h1>FIND YOUR <em>FLOW.</em><br/>MASTER THE KEYS<span className="title-dot">.</span></h1>
           <p>From your very first keystroke to lightning-fast reflexes. Build speed, sharpen accuracy, and earn your black belt. One joyful session at a time.</p>
-          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 4 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
+          <div className="hero-chips"><span><Icon name="check" size={15}/> 9 dojo belts</span><span><Icon name="check" size={15}/> 5 game modes</span><span><Icon name="check" size={15}/> No account needed</span></div>
         </div>
         <div className="hero-emblem" aria-hidden="true"><div className="emblem-outer"><div className="emblem-middle"><div className="emblem-inner"><span>Φ</span><small>DOJO</small></div></div></div><span className="emblem-spark spark-a">✦</span><span className="emblem-spark spark-b">✧</span></div>
       </section>
@@ -193,7 +194,7 @@ export default function App() {
           })}
         </div>
       </section>}
-      <section className="arena-section">
+      {mode === 'kombat' ? <Kombat /> : <section className="arena-section">
         <div className="section-head"><div><span className="section-kicker">{mode === 'dojo' ? '03' : '02'} / TRAINING ARENA</span><h2>Enter the dojo<span>.</span></h2></div><p>Accuracy first. Speed will follow.</p></div>
         <div className="arena">
           <div className="arena-top">
@@ -227,7 +228,7 @@ export default function App() {
             <div className="result-buttons">{canAdvance && <button className="next-btn" onClick={() => restart('dojo', nextUnlocked)}>NEXT BELT <Icon name="arrow" size={15}/></button>}<button className="again-btn" onClick={() => restart()}>TRY AGAIN</button></div>
           </div>}
         </div>
-      </section>
+      </section>}
       <section className="footer-panels">
         <div className="footer-panel"><span className="panel-icon">◎</span><div><strong>Practice beats perfection.</strong><p>Even five minutes a day can help build muscle memory. Take breaks, relax your shoulders, and let your hands learn.</p></div></div>
         <div className="footer-panel"><span className="panel-icon">◈</span><div><strong>Your progress belongs to you.</strong><p>Personal bests and belts are saved only in this browser. No ads, accounts, or tracking. Clearing site data resets your progress.</p></div></div>

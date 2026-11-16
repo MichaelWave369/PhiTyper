@@ -17,6 +17,11 @@ try {
   assert.match(html, /PhiTyper/);
   assert.match(html, /START TYPING/);
   assert.match(html, /Nine belts/);
+  // Render the actual arcade root as well, including all JSX used by the new mode.
+  const { default: Kombat } = await server.ssrLoadModule('/src/Kombat.jsx');
+  const arcade = renderToString(React.createElement(Kombat));
+  assert.match(arcade, /THE THREE TRIALS/);
+  assert.match(arcade, /START FIGHT/);
   console.log('React app render smoke test passed.');
 } finally {
   await server.close();

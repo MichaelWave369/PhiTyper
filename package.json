@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/game.test.js && node scripts/smoke.mjs"
+    "test": "node --test src/game.test.js src/kombat.test.js && node scripts/smoke.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
